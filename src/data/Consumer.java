@@ -47,6 +47,12 @@ public final class Consumer extends Entitati {
     private static final double PROCENT_PROFIT = 0.2;
     private static final double PENALIZARE = 1.2;
 
+    public Consumer(final int id, final int initialBudget, final int monthlyIncome) {
+        this.id = id;
+        this.initialBudget = initialBudget;
+        this.monthlyIncome = monthlyIncome;
+    }
+
     public int getPenalise() {
         return oldPenalise;
     }
@@ -97,12 +103,6 @@ public final class Consumer extends Entitati {
 
     public void setContractLength(final int contractLength) {
         this.contractLength = contractLength;
-    }
-
-    public Consumer(final int id, final int initialBudget, final int monthlyIncome) {
-        this.id = id;
-        this.initialBudget = initialBudget;
-        this.monthlyIncome = monthlyIncome;
     }
 
     public int getId() {

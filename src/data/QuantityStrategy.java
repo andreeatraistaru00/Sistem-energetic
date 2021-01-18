@@ -1,5 +1,6 @@
 package data;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +13,6 @@ public class QuantityStrategy implements ProducerStrategy {
 
         List<Producer> sortedList = producers.stream().sorted(producerComparator)
                 .collect(Collectors.toList());
-        return sortedList.get(0);
+        return sortedList.get(sortedList.size() - 1);
     }
 }

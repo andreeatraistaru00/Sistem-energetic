@@ -13,7 +13,7 @@ public class GreenStrategy implements ProducerStrategy{
     @Override
     public Producer chooseProducer(List<Producer> producers) {
         Comparator<Producer> producerComparator = Comparator.comparing(Producer::getPriceKW)
-                .thenComparing(Producer::getEnergyPerDistributor);
+                .thenComparing(Producer::getEnergyPerDistributor, Comparator.reverseOrder());
 
         List<Producer> sortedList = producers.stream().sorted(producerComparator)
                 .collect(Collectors.toList());

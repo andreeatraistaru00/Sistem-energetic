@@ -2,10 +2,12 @@ package data;
 
 
 import output.Contract;
+import output.MonthlyStats;
 import strategies.EnergyChoiceStrategyType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 public final class Distributor extends Entitati {
     /**
@@ -48,8 +50,24 @@ public final class Distributor extends Entitati {
      * costul de productie
      */
     private int productionCost;
-
+    private int contractCost;
     private List<Producer> producerList = new ArrayList<>();
+
+    public int getContractCost() {
+        return contractCost;
+    }
+
+    public void setContractCost(int contractCost) {
+        this.contractCost = contractCost;
+    }
+
+    public List<Producer> getProducerList() {
+        return producerList;
+    }
+
+    public void setProducerList(List<Producer> producerList) {
+        this.producerList = producerList;
+    }
 
     private static final double PROCENT_PROFIT = 0.2;
     private static final int MAX_BUGET = 9999;
@@ -94,31 +112,65 @@ public final class Distributor extends Entitati {
         return contracts;
     }
 
-    public Producer chooseProducer(List<Producer> producers) {
+    public void chooseProducer(List<Producer> producers, int month) {
+        List<Producer> producers1 = new ArrayList<>(producers);
+
         if (this.producerList.size() != 0){
-            producerList.stream().filter(producers::contains).forEach(producers::remove);
+            producerList.stream().filter(producers1::contains).forEach(producers1::remove);
         }
+
+        producers1.removeIf(producer -> producer.getDistributorsIds().get(month).size() >= producer.getMaxDistributors());
+
         if (this.getProducerStrategy().equals(EnergyChoiceStrategyType.GREEN)) {
             ProducerStrategy producerStrategy = new GreenStrategy();
-            Producer producer = producerStrategy.chooseProducer(producers);
+            Producer producer = producerStrategy.chooseProducer(producers1);
             this.producerList.add(producer);
-            producer.getDistributorsIds().add(this.id);
-            return producer;
+            producer.getDistributorsIds().get(month).add(id);
+
         } else if (this.getProducerStrategy().equals(EnergyChoiceStrategyType.PRICE)) {
             ProducerStrategy producerStrategy = new PriceStrategy();
-            Producer producer = producerStrategy.chooseProducer(producers);
+            Producer producer = producerStrategy.chooseProducer(producers1);
             this.producerList.add(producer);
-            producer.getDistributorsIds().add(this.id);
-            return producer;
+            producer.getDistributorsIds().get(month).add(id);
         } else {
             ProducerStrategy producerStrategy = new QuantityStrategy();
-            Producer producer = producerStrategy.chooseProducer(producers);
+            Producer producer = producerStrategy.chooseProducer(producers1);
             this.producerList.add(producer);
-            producer.getDistributorsIds().add(this.id);
-            return producer;
+            producer.getDistributorsIds().get(month).add(id);
         }
     }
 
+    public void update(List<Producer> producers, int month){
+        for (Producer producer : producers){
+            if (producerList.contains(producer)){
+                int index = producer.getDistributorsIds().get(month).indexOf(id);
+                producer.getDistributorsIds().get(month).remove(index);
+
+            }
+        }
+        this.producerList.clear();
+
+        while (!getEnergy()) {
+            chooseProducer(producers, month);
+        }
+            setProductionCost();
+
+    }
+    public void removeProducers(){
+        this.producerList.removeAll(producerList);
+    }
+
+    public boolean getEnergy() {
+        int sum = 0;
+        for (Producer producer : producerList){
+            sum += producer.getEnergyPerDistributor();
+        }
+        if (sum < this.energyNeededKW){
+            return false;
+        } else {
+            return true;
+        }
+    }
     public void setProductionCost() {
         int cost = 0;
         for (Producer producer : this.producerList){
@@ -218,10 +270,6 @@ public final class Distributor extends Entitati {
         this.initialInfrastructureCost = initialInfrastructureCost;
     }
 
-    public Distributor() {
-        super();
-    }
-
     public Distributor(int id, int contractLength, int initialBudget, int initialInfrastructureCost,
                        int energyNeededKW, EnergyChoiceStrategyType producerStrategy) {
         this.id = id;
@@ -245,6 +293,7 @@ public final class Distributor extends Entitati {
         } else {
             price = (int) Math.round(initialInfrastructureCost + productionCost + profit);
         }
+        this.contractCost = price;
         return price;
     }
 

@@ -8,7 +8,7 @@ public class PriceStrategy implements ProducerStrategy {
     @Override
     public Producer chooseProducer(List<Producer> producers) {
         Comparator<Producer> producerComparator = Comparator.comparing(Producer::getPriceKW)
-                .thenComparing(Producer::getEnergyPerDistributor)
+                .thenComparing(Producer::getEnergyPerDistributor, Comparator.reverseOrder())
                 .thenComparing(Producer::getId);
 
         List<Producer> sortedList = producers.stream().sorted(producerComparator)

@@ -12,7 +12,7 @@ public class Producer extends Entitati {
     private int maxDistributors;
     private double priceKW;
     private int energyPerDistributor;
-    private List<Integer> distributorsIds = new ArrayList<>();
+    private List<List<Integer>> distributorsIds = new ArrayList<>();
     private List<MonthlyStats> monthlyStats = new ArrayList<>();
 
     public Producer(int id, EnergyType energyType, int maxDistributors,
@@ -32,11 +32,11 @@ public class Producer extends Entitati {
         this.monthlyStats = monthlyStats;
     }
 
-    public List<Integer> getDistributorsIds() {
+    public List<List<Integer>> getDistributorsIds() {
         return distributorsIds;
     }
 
-    public void setDistributorsIds(List<Integer> distributorsIds) {
+    public void setDistributorsIds(List<List<Integer>> distributorsIds) {
         this.distributorsIds = distributorsIds;
     }
 
@@ -78,6 +78,11 @@ public class Producer extends Entitati {
 
     public void setEnergyPerDistributor(int energyPerDistributor) {
         this.energyPerDistributor = energyPerDistributor;
+    }
+    public void addDistributorsIds(int month){
+        for (int i = 0; i <= month; i++){
+            distributorsIds.add(new ArrayList<>());
+        }
     }
 
     @Override
