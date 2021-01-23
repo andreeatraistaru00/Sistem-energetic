@@ -170,7 +170,7 @@ public final class Test {
         System.out.println("Up to "
                 + manualScore
                 + " points will be awarded manually by the teaching assistants."
-                + " (README & GIT)");
+                + " (README.md & GIT)");
         System.out.println("The final value can be exceeded for great implementations.");
     }
 

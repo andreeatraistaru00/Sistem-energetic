@@ -1,36 +1,20 @@
 package output;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class Output {
 
-    private List<Consumatori> consumers = new ArrayList<>();
+    private List<Consumatori> consumers;
 
-    private List<Distributori> distributors = new ArrayList<>();
+    private List<Distributori> distributors;
 
-    private List<EnergyProducer> energyProducers = new ArrayList<>();
-    /**
-     * @param consumatori
-     * @param distributori
-     */
-    public void init(final List<Consumatori> consumatori, final List<Distributori> distributori,
+    private List<EnergyProducer> energyProducers;
+
+    public Output(final List<Consumatori> consumatori, final List<Distributori> distributori,
                      final List<EnergyProducer> energyProducerList) {
         this.consumers = consumatori;
         this.distributors = distributori;
         this.energyProducers = energyProducerList;
-    }
-
-    private Output() {
-
-    }
-
-    /**
-     * @return
-     */
-    public static Output getInstance() {
-        Output instance = new Output();
-        return instance;
     }
 
     public List<Consumatori> getConsumers() {

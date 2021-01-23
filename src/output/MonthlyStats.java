@@ -1,11 +1,10 @@
 package output;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class MonthlyStats {
     private int month;
-    private List<Integer> distributorsIds = new ArrayList<>();
+    private List<Integer> distributorsIds;
 
     public int getMonth() {
         return month;
@@ -30,9 +29,9 @@ public final class MonthlyStats {
 
     @Override
     public String toString() {
-        return "MonthlyStats{" +
-                "month=" + month +
-                ", distributorsIds=" + distributorsIds +
-                '}';
+        return "MonthlyStats{"
+                + "month=" + month
+                + ", distributorsIds=" + distributorsIds
+                + '}';
     }
 }

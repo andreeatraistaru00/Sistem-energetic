@@ -1,11 +1,18 @@
 package data;
 
-import input.*;
+import entities.Entitati;
+import entities.EntitatiFactory;
+import input.ConsumerInput;
+import input.DistributorChanges;
+import input.DistributorsInput;
+import input.MonthlyUpdatesInput;
+import input.ProducerChanges;
+import input.ProducerInput;
 import output.Contract;
 
 import java.util.List;
 
-public class MonthlySimulation {
+public final class MonthlySimulation {
     private MonthlyUpdatesInput updatesInput;
     private List<Distributor> distributors;
     private List<Consumer> consumers;
@@ -27,6 +34,10 @@ public class MonthlySimulation {
         this.producerInputs = producerInputs;
     }
 
+    /**
+     * metoda realizeaza update-ul pentru o luna specificata
+     * @param month
+     */
     public void makeUpdates(int month) {
 
         if (updatesInput.getDistributorChanges().size() != 0) {
@@ -55,24 +66,29 @@ public class MonthlySimulation {
                 distributors.get(consumer.getIdDistributor()).addContract(consumer);
             }
         }
+        // distribuitorii si consumatorii isi platesc datoriile si
+        //isi primesc venitul lunar
         PayDebts payDebts = new PayDebts(consumers, distributors);
         payDebts.pay();
-       // System.out.println(producers.get(0).getDistributorsIds().get(month));
-        for (Producer producer : producers){
-            producer.getDistributorsIds().get(month).addAll(producer.getDistributorsIds().get(month-1));
+
+        for (Producer producer : producers) {
+            producer.getDistributorsIds().get(month)
+                    .addAll(producer.getDistributorsIds().get(month - 1));
         }
-        //System.out.println(producers.get(0).getDistributorsIds().get(month));
-        if (updatesInput.getProducerChanges().size() != 0){
+       // se realizeaza upadate-urile pentru producatori si se notifica distribuitorii
+        if (updatesInput.getProducerChanges().size() != 0) {
             Subject subject = new Subject(distributors);
-            for (ProducerChanges changes : updatesInput.getProducerChanges()){
+            for (ProducerChanges changes : updatesInput.getProducerChanges()) {
                 producers.get(changes.getId()).
                         setEnergyPerDistributor(changes.getEnergyPerDistributor());
 
             }
-
-                subject.notifyDistributors(updatesInput.getProducerChanges(), month, producers);
-
+            subject.notifyDistributors(updatesInput.getProducerChanges());
         }
-
+        for (Distributor distributor : distributors) {
+            if (distributor.isFlagUpdate()) {
+                distributor.update(producers, month);
+            }
+        }
     }
 }

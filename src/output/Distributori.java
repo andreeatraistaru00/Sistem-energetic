@@ -1,6 +1,6 @@
 package output;
 
-import data.Entitati;
+import entities.Entitati;
 import strategies.EnergyChoiceStrategyType;
 
 import java.util.ArrayList;
@@ -16,9 +16,13 @@ public final class Distributori extends Entitati {
     private boolean isBankrupt;
     private List<Contract> contracts = new ArrayList<>();
 
-    public Distributori(int id, int energyNeededKW,
-                        int contractCost, int budget,
-                        EnergyChoiceStrategyType producerStrategy, boolean isBankrupt, List<Contract> contracts) {
+    public Distributori(int id,
+                        int energyNeededKW,
+                        int contractCost,
+                        int budget,
+                        EnergyChoiceStrategyType producerStrategy,
+                        boolean isBankrupt,
+                        List<Contract> contracts) {
         this.id = id;
         this.energyNeededKW = energyNeededKW;
         this.contractCost = contractCost;

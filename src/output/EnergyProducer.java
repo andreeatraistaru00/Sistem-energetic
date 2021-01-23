@@ -1,8 +1,6 @@
 package output;
 
 import entities.EnergyType;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public final class EnergyProducer {
@@ -13,7 +11,12 @@ public final class EnergyProducer {
     private int energyPerDistributor;
     private List<MonthlyStats> monthlyStats;
 
-    public EnergyProducer(int id, int maxDistributors, double priceKW, EnergyType energyType, int energyPerDistributor, List<MonthlyStats> monthlyStats) {
+    public EnergyProducer(int id,
+                          int maxDistributors,
+                          double priceKW,
+                          EnergyType energyType,
+                          int energyPerDistributor,
+                          List<MonthlyStats> monthlyStats) {
         this.id = id;
         this.maxDistributors = maxDistributors;
         this.priceKW = priceKW;
@@ -72,13 +75,13 @@ public final class EnergyProducer {
 
     @Override
     public String toString() {
-        return "EnergyProducer{" +
-                "id=" + id +
-                ", maxDistributors=" + maxDistributors +
-                ", priceKW=" + priceKW +
-                ", energyType=" + energyType +
-                ", energyPerDistributor=" + energyPerDistributor +
-                ", monthlyStats=" + monthlyStats +
-                '}';
+        return "EnergyProducer{"
+                + "id=" + id
+                + ", maxDistributors=" + maxDistributors
+                + ", priceKW=" + priceKW
+                + ", energyType=" + energyType
+                + ", energyPerDistributor=" + energyPerDistributor
+                + ", monthlyStats=" + monthlyStats
+                + '}';
     }
 }

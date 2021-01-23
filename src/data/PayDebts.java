@@ -2,7 +2,7 @@ package data;
 
 import java.util.List;
 
-public class PayDebts {
+public final class PayDebts {
     private List<Consumer> consumers;
     private List<Distributor> distributors;
 
@@ -11,7 +11,10 @@ public class PayDebts {
         this.distributors = distributors;
     }
 
-    public void pay(){
+    /**
+     * consumatorii si distribuitorii isi platesc cheltuielile lunare
+     */
+    public void pay() {
         for (Consumer consumer : consumers) {
             if (!consumer.isBankrupt()) {
                 if (!consumer.getRestant()) {

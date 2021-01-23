@@ -1,13 +1,17 @@
 package data;
 
 
+import entities.Entitati;
 import output.Contract;
-import output.MonthlyStats;
 import strategies.EnergyChoiceStrategyType;
+import strategies.GreenStrategy;
+import strategies.PriceStrategy;
+import strategies.ProducerStrategy;
+import strategies.QuantityStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
+
 
 public final class Distributor extends Entitati {
     /**
@@ -52,6 +56,16 @@ public final class Distributor extends Entitati {
     private int productionCost;
     private int contractCost;
     private List<Producer> producerList = new ArrayList<>();
+    private boolean flagUpdate = false;
+    private static final int CONSTANT = 10;
+
+    public boolean isFlagUpdate() {
+        return flagUpdate;
+    }
+
+    public void setFlagUpdate(boolean flagUpdate) {
+        this.flagUpdate = flagUpdate;
+    }
 
     public int getContractCost() {
         return contractCost;
@@ -112,40 +126,52 @@ public final class Distributor extends Entitati {
         return contracts;
     }
 
+    /**
+     *
+     * @param producers
+     * @param month
+     * metoda alege un producator conform unei strategii
+     */
     public void chooseProducer(List<Producer> producers, int month) {
         List<Producer> producers1 = new ArrayList<>(producers);
 
-        if (this.producerList.size() != 0){
+        if (this.producerList.size() != 0) {
             producerList.stream().filter(producers1::contains).forEach(producers1::remove);
         }
 
-        producers1.removeIf(producer -> producer.getDistributorsIds().get(month).size() >= producer.getMaxDistributors());
+        producers1.removeIf(producer ->
+                producer.getDistributorsIds().get(month).size() >= producer.getMaxDistributors());
 
         if (this.getProducerStrategy().equals(EnergyChoiceStrategyType.GREEN)) {
-            ProducerStrategy producerStrategy = new GreenStrategy();
-            Producer producer = producerStrategy.chooseProducer(producers1);
+            ProducerStrategy strategy = new GreenStrategy();
+            Producer producer = strategy.chooseProducer(producers1);
             this.producerList.add(producer);
             producer.getDistributorsIds().get(month).add(id);
 
         } else if (this.getProducerStrategy().equals(EnergyChoiceStrategyType.PRICE)) {
-            ProducerStrategy producerStrategy = new PriceStrategy();
-            Producer producer = producerStrategy.chooseProducer(producers1);
+            ProducerStrategy strategy = new PriceStrategy();
+            Producer producer = strategy.chooseProducer(producers1);
             this.producerList.add(producer);
             producer.getDistributorsIds().get(month).add(id);
         } else {
-            ProducerStrategy producerStrategy = new QuantityStrategy();
-            Producer producer = producerStrategy.chooseProducer(producers1);
+            ProducerStrategy strategy = new QuantityStrategy();
+            Producer producer = strategy.chooseProducer(producers1);
             this.producerList.add(producer);
             producer.getDistributorsIds().get(month).add(id);
         }
     }
 
-    public void update(List<Producer> producers, int month){
-        for (Producer producer : producers){
-            if (producerList.contains(producer)){
+    /**
+     * distribuitorul este sters de la producatorii actuali
+     * si apoi se se face update la lista de producatori
+     * @param producers
+     * @param month
+     */
+    public void update(List<Producer> producers, int month) {
+        for (Producer producer : producers)  {
+            if (producerList.contains(producer)) {
                 int index = producer.getDistributorsIds().get(month).indexOf(id);
                 producer.getDistributorsIds().get(month).remove(index);
-
             }
         }
         this.producerList.clear();
@@ -153,31 +179,32 @@ public final class Distributor extends Entitati {
         while (!getEnergy()) {
             chooseProducer(producers, month);
         }
-            setProductionCost();
-
-    }
-    public void removeProducers(){
-        this.producerList.removeAll(producerList);
+        setProductionCost();
+        setFlagUpdate(false);
     }
 
+    /**
+     * verifica daca distribuitorul are cantitatea de energie lunara necesara
+     * @return
+     */
     public boolean getEnergy() {
         int sum = 0;
-        for (Producer producer : producerList){
+        for (Producer producer : producerList) {
             sum += producer.getEnergyPerDistributor();
         }
-        if (sum < this.energyNeededKW){
-            return false;
-        } else {
-            return true;
-        }
+        return sum >= this.energyNeededKW;
     }
+
+    /**
+     * metoda calculeaza costul de productie
+     */
     public void setProductionCost() {
         int cost = 0;
-        for (Producer producer : this.producerList){
+        for (Producer producer : this.producerList) {
             cost += producer.getEnergyPerDistributor() * producer.getPriceKW();
         }
-        int productionCost = (int) Math.round(Math.floor(cost / 10));
-        this.productionCost = productionCost;
+        int production = (int) Math.round(Math.floor(cost / CONSTANT));
+        this.productionCost = production;
     }
     /**
      * metoda adauga un contract nou in lista de contracte
@@ -339,6 +366,6 @@ public final class Distributor extends Entitati {
                 + ", initialBudget='" + initialBudget + '\''
                 + ",initialInfrastructureCost='" + initialInfrastructureCost + '\''
                 + ",energyNeededKW=" + energyNeededKW + '\''
-                + ",producerStrategy=" + producerStrategy +'}';
+                + ",producerStrategy=" + producerStrategy + '}';
     }
 }

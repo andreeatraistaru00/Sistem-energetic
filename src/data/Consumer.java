@@ -1,5 +1,6 @@
 package data;
 
+import entities.Entitati;
 import output.Contract;
 
 import java.util.List;

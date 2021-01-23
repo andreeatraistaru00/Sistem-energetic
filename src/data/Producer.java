@@ -1,12 +1,13 @@
 package data;
 
 import entities.EnergyType;
+import entities.Entitati;
 import output.MonthlyStats;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Producer extends Entitati {
+public final class Producer extends Entitati {
     private int id;
     private EnergyType energyType;
     private int maxDistributors;
@@ -79,8 +80,14 @@ public class Producer extends Entitati {
     public void setEnergyPerDistributor(int energyPerDistributor) {
         this.energyPerDistributor = energyPerDistributor;
     }
-    public void addDistributorsIds(int month){
-        for (int i = 0; i <= month; i++){
+
+    /**
+     * metoda creaza o lista cu id-urile distribuitorilor
+     * pentru fiecare luna
+     * @param month
+     */
+    public void addDistributorsIds(int month) {
+        for (int i = 0; i <= month; i++) {
             distributorsIds.add(new ArrayList<>());
         }
     }

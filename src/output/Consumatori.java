@@ -1,6 +1,6 @@
 package output;
 
-import data.Entitati;
+import entities.Entitati;
 
 public final class Consumatori extends Entitati {
 
